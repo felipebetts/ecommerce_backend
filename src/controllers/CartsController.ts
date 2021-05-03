@@ -15,4 +15,14 @@ export class CartsController {
 
         return res.json(productInCart)
     }
+
+    async listByUser(req: Request, res: Response) {
+        const { user_id } = req.params
+
+        const cartsService = new CartsService()
+
+        const cartProductsList = await cartsService.listByUser(user_id)
+
+        return res.json(cartProductsList)
+    }
 }

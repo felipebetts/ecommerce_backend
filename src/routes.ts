@@ -15,6 +15,7 @@ routes.post('/users/create', usersController.create)
 routes.post('/products/create', productsController.create)
 
 routes.post('/carts/add', cartsController.addToCart)
+routes.get('/carts/:user_id', cartsController.listByUser)
 
 
 export { routes }

@@ -1,6 +1,7 @@
 import { getCustomRepository, Repository } from "typeorm";
 import { Cart } from "../entities/Cart";
 import { CartsRepository } from "../repositories/CartsRepository";
+import { ProductsService } from "./ProductsService";
 
 
 interface ICartsAdd {
@@ -34,6 +35,30 @@ export class CartsService {
         await this.cartsRepository.save(productInCart)
 
         return productInCart
+    }
+
+    async listByUser(user_id: string) {
+
+        const productsService = new ProductsService()
+
+        const cartList = await this.cartsRepository.find({
+            user_id
+        })
+
+        const productIdArray = cartList.map((e, i) => (e.product_id))
+
+        const productList = [] // productIdArray.map(async (e, i) => await productsService.getById(e))
+
+        for (let i = 0; i < productIdArray.length; i++) {
+            let product = await productsService.getById(productIdArray[i])
+            productList.push(product)
+        }
+
+        // const product = await productsService.getById(productIdArray[0])
+
+        // console.log(product)
+
+        return productList
     }
 
 }

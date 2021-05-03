@@ -35,4 +35,12 @@ export class ProductsService {
 
         return product
     }
+
+    async getById(id: string) {
+        const product = await this.productsRepository.findOne({
+            id
+        })
+
+        return product
+    }
 }
