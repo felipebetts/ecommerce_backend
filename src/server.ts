@@ -2,9 +2,10 @@ import dotenv from 'dotenv'
 import express from 'express'
 import 'reflect-metadata'
 import './database'
-dotenv.config()
 import { routes } from './routes'
 
+
+dotenv.config()
 
 const app = express()
 
