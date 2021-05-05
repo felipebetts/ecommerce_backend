@@ -11,6 +11,7 @@ const productsController = new ProductsController()
 const cartsController = new CartsController()
 
 routes.post('/users/create', usersController.create)
+routes.post('/users/login', usersController.login)
 
 routes.post('/products/create', productsController.create)
 

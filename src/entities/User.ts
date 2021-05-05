@@ -17,9 +17,6 @@ export class User {
     @Column()
     password: string
 
-    @Column()
-    cart_id: string
-
     @CreateDateColumn()
     created_at: Date
     

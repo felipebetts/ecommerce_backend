@@ -13,4 +13,18 @@ export class UsersController {
 
         return res.json(user)
     }
+
+    async login(req: Request, res: Response) {
+
+        const { usernameOrEmail, password } = req.body
+
+        const usersService = new UsersService()
+
+        const userWithToken = await usersService.login({
+            usernameOrEmail,
+            password
+        })
+
+        return res.json(userWithToken)
+    }
 }

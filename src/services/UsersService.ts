@@ -10,6 +10,18 @@ interface IUsersCreate {
     password: string
 }
 
+interface IUsersLogin {
+    usernameOrEmail: string
+    password: string
+}
+
+interface IUsersUpdate {
+    id: string
+    name: string
+    email: string
+    password: string
+}
+
 export class UsersService {
     private usersRepository: Repository<User>
 
@@ -18,7 +30,7 @@ export class UsersService {
     }
 
     async create({ email, password }: IUsersCreate) {
-        
+
         // antes de criar um novo usuário precisamos verificar se já existe algum usuário cadastrado nesse email
         const userExists = await this.usersRepository.findOne({
             email
@@ -28,8 +40,6 @@ export class UsersService {
             // se já existir um usuário, retornar ele
             return userExists
         }
-
-        console.log(process.env.AUTH_SECRET)
 
         // se não existe vamos criar um:
         const salt = bcrypt.genSaltSync()
@@ -44,5 +54,36 @@ export class UsersService {
 
 
         return user
+    }
+
+    async login({ usernameOrEmail, password }: IUsersLogin) {
+
+        const user = usernameOrEmail.includes('@') ? await this.usersRepository.findOne({
+            where: { email: usernameOrEmail }
+        }) : await this.usersRepository.findOne({
+            where: { name: usernameOrEmail }
+        })
+
+        if (user && bcrypt.compareSync(password, user.password)) {
+            const token = jwt.sign({ data: user }, process.env.AUTH_SECRET, {
+                expiresIn: '10 days'
+            })
+            return {
+                ...user,
+                token
+            }
+        } else {
+            return {
+                errors: [
+                    {
+                        message: 'Usuario ou senha invalidos'
+                    }
+                ]
+            }
+        }
+    }
+
+    async update({ id, name, email, password }: IUsersUpdate) {
+
     }
 }

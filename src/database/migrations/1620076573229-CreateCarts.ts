@@ -13,6 +13,11 @@ export class CreateCarts1620076573229 implements MigrationInterface {
                         isPrimary: true
                     },
                     {
+                        name: 'quantity',
+                        type: 'int',
+                        default: 1,
+                    },
+                    {
                         name: 'user_id',
                         type: 'uuid'
                     },
