@@ -1,4 +1,4 @@
-import { getCustomRepository, Repository } from "typeorm";
+import { getConnection, getCustomRepository, Repository } from "typeorm";
 import { Product } from "../entities/Product";
 import { ProductsRepository } from "../repositories/ProductsRepository";
 
@@ -8,6 +8,11 @@ interface IProductsCreate {
     sales?: number
     variant?: [string]
     description: string
+}
+
+interface IProductsPaginated {
+    limit: string
+    cursor?: string
 }
 
 export class ProductsService {
@@ -42,5 +47,31 @@ export class ProductsService {
         })
 
         return product
+    }
+
+    async getProducts({ limit, cursor }: IProductsPaginated) {
+
+        const realLimit = Math.min(50, parseInt(limit))
+        const realLimitPlusOne = realLimit + 1
+
+        const replacements: any[] = [realLimitPlusOne]
+
+        if (cursor) {
+            replacements.push(new Date((cursor)))
+        }
+
+        const products = await getConnection().query(`
+            select p.*
+            from products p
+            ${cursor ? `where p.created_at < $2` : "" /* o $1 aponta para o array que vamos declarar apos a query */}
+            order by p.created_at DESC
+            limit $1
+        `, replacements)
+        console.log(replacements)
+
+        return {
+            products: products.slice(0, realLimit),
+            hasMore: products.length === realLimitPlusOne
+        }
     }
 }

@@ -16,6 +16,19 @@ export class CartsController {
         return res.json(productInCart)
     }
 
+    async removeFromCart(req: Request, res: Response) {
+        const { user_id, product_id } = req.body
+
+        const cartsService = new CartsService()
+
+        const productRemovedFromCart = await cartsService.removeFromCart({
+            user_id,
+            product_id
+        })
+
+        return res.json(productRemovedFromCart)
+    }
+
     async listByUser(req: Request, res: Response) {
         const { user_id } = req.params
 

@@ -14,8 +14,10 @@ routes.post('/users/create', usersController.create)
 routes.post('/users/login', usersController.login)
 
 routes.post('/products/create', productsController.create)
+routes.get('/products/:limit', productsController.getProducts)
 
 routes.post('/carts/add', cartsController.addToCart)
+routes.delete('/carts/remove', cartsController.removeFromCart)
 routes.get('/carts/:user_id', cartsController.listByUser)
 
 

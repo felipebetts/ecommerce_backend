@@ -23,6 +23,7 @@ export class CreateProducts1620066140964 implements MigrationInterface {
                     {
                         name: 'sales',
                         type: 'int',
+                        default: 0
                     },
                     {
                         name: 'variant',

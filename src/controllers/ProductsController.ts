@@ -13,7 +13,7 @@ export class ProductsController {
         } = req.body
 
         const productsService = new ProductsService()
-
+        
         const product = await productsService.create({
             name,
             price,
@@ -21,7 +21,21 @@ export class ProductsController {
             variant,
             description
         })
-
+        
         return res.json(product)
+    }
+    
+    async getProducts (req: Request, res: Response) {
+        const { limit } = req.params
+        const { cursor } = req.body
+        
+        const productsService = new ProductsService()
+
+        const products = await productsService.getProducts({
+            limit,
+            cursor
+        })
+
+        return res.json(products)
     }
 }
