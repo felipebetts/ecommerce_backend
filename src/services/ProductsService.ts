@@ -1,6 +1,7 @@
 import { getConnection, getCustomRepository, Repository } from "typeorm";
 import { Product } from "../entities/Product";
 import { ProductsRepository } from "../repositories/ProductsRepository";
+import multer from 'multer'
 
 interface IProductsCreate {
     name: string
@@ -8,6 +9,7 @@ interface IProductsCreate {
     sales?: number
     variant?: [string]
     description: string
+    imageSrc ?: [string]
 }
 
 interface IProductsPaginated {
@@ -73,5 +75,11 @@ export class ProductsService {
             products: products.slice(0, realLimit),
             hasMore: products.length === realLimitPlusOne
         }
+    }
+
+    async uploadProductPics () {
+        const upload = multer({
+            dest: '/public/images'
+        })
     }
 }
