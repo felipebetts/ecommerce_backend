@@ -17,13 +17,14 @@ export class CartsController {
     }
 
     async removeFromCart(req: Request, res: Response) {
-        const { user_id, product_id } = req.body
+        const { user_id, product_id, remove_all } = req.body
 
         const cartsService = new CartsService()
 
         const productRemovedFromCart = await cartsService.removeFromCart({
             user_id,
-            product_id
+            product_id,
+            remove_all
         })
 
         return res.json(productRemovedFromCart)

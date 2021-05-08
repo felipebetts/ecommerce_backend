@@ -4,9 +4,15 @@ import { CartsRepository } from "../repositories/CartsRepository";
 import { ProductsService } from "./ProductsService";
 
 
-interface ICartsAddDelete {
+interface ICartsAdd {
     user_id: string
     product_id: string
+}
+
+interface ICartsDelete {
+    user_id: string
+    product_id: string
+    remove_all?: boolean
 }
 
 export class CartsService {
@@ -16,7 +22,7 @@ export class CartsService {
         this.cartsRepository = getCustomRepository(CartsRepository)
     }
 
-    async addToCart({ user_id, product_id}: ICartsAddDelete) {
+    async addToCart({ user_id, product_id}: ICartsAdd) {
 
         // verificar se produto já está no carrinho:
         const productAlreadyInCart = await this.cartsRepository.findOne({
@@ -52,7 +58,7 @@ export class CartsService {
         }
     }
 
-    async removeFromCart({ user_id, product_id }: ICartsAddDelete) {
+    async removeFromCart({ user_id, product_id, remove_all }: ICartsDelete) {
 
         // verificar se o produto citado está no carrinho de fato
         const isProductInCart = await this.cartsRepository.findOne({
@@ -61,11 +67,31 @@ export class CartsService {
         })
 
         if (isProductInCart) {
-            await this.cartsRepository.delete({
-                id: isProductInCart.id
-            })
-            return {
-                message: 'Item removido do carrinho com sucesso'
+            console.log('isProductInCart: ', isProductInCart)
+            
+            if (remove_all || isProductInCart.quantity === 1) {
+                await this.cartsRepository.delete({
+                    id: isProductInCart.id
+                })
+                return {
+                    message: 'Item removido do carrinho com sucesso'
+                }
+            } else {
+                const newProductQuantity = {
+                    ...isProductInCart,
+                    quantity: isProductInCart.quantity - 1
+                }
+                
+                const updatedProduct = await this.cartsRepository.update({
+                    id: isProductInCart.id
+                }, newProductQuantity)
+                
+                
+                console.log('updatedProduct: ', updatedProduct)
+
+                return {
+                    message: 'Uma unidade do item removida do carrinho com sucesso'
+                }
             }
         } else {
             return {
