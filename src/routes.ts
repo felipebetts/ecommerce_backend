@@ -12,9 +12,13 @@ const cartsController = new CartsController()
 
 routes.post('/users/create', usersController.create)
 routes.post('/users/login', usersController.login)
+routes.post('/users/validate', usersController.validateToken)
+routes.get('/users/:id', usersController.getById)
 
 routes.post('/products/create', productsController.create)
-routes.get('/products/:limit', productsController.getProducts)
+routes.get('/products/:id', productsController.getById)
+routes.get('/products/date/:limit', productsController.getProductsByDate)
+routes.get('/products/price/:limit', productsController.getProductsByPrice)
 
 routes.post('/carts/add', cartsController.addToCart)
 routes.delete('/carts/remove', cartsController.removeFromCart)

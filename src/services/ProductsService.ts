@@ -51,7 +51,7 @@ export class ProductsService {
         return product
     }
 
-    async getProducts({ limit, cursor }: IProductsPaginated) {
+    async getProductsByDate({ limit, cursor }: IProductsPaginated) {
 
         const realLimit = Math.min(50, parseInt(limit))
         const realLimitPlusOne = realLimit + 1
@@ -69,7 +69,32 @@ export class ProductsService {
             order by p.created_at DESC
             limit $1
         `, replacements)
-        console.log(replacements)
+        // console.log(replacements)
+
+        return {
+            products: products.slice(0, realLimit),
+            hasMore: products.length === realLimitPlusOne
+        }
+    }
+
+    async getProductsByPrice({ limit, cursor }: IProductsPaginated) {
+
+        const realLimit = Math.min(50, parseInt(limit))
+        const realLimitPlusOne = realLimit + 1
+
+        const replacements: any[] = [realLimitPlusOne]
+
+        if (cursor) {
+            replacements.push(parseFloat(cursor))
+        }
+
+        const products = await getConnection().query(`
+            select p.*
+            from products p
+            ${cursor ? `where p.price > $2` : "" /* o $1 aponta para o array que vamos declarar apos a query */}
+            order by p.price ASC
+            limit $1
+        `, replacements)
 
         return {
             products: products.slice(0, realLimit),

@@ -5,11 +5,11 @@ import { UsersService } from "../services/UsersService";
 export class UsersController {
     async create(req: Request, res: Response) {
 
-        const { email, password } = req.body
+        const { name, email, password } = req.body
 
         const usersService = new UsersService()
 
-        const user = await usersService.create({ email, password })
+        const user = await usersService.create({ name, email, password })
 
         return res.json(user)
     }
@@ -26,5 +26,25 @@ export class UsersController {
         })
 
         return res.json(userWithToken)
+    }
+
+    async validateToken(req: Request, res: Response) {
+        const { token } = req.body
+
+        const usersService = new UsersService()
+
+        const response = await usersService.validateToken(token)
+
+        return res.json(response)
+    }
+
+    async getById(req: Request, res: Response) {
+        const { id } = req.params
+
+        const usersService = new UsersService()
+
+        const user = await usersService.getById(id)
+
+        return res.json(user)
     }
 }

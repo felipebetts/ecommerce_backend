@@ -6,6 +6,7 @@ import jwt from 'jsonwebtoken'
 
 
 interface IUsersCreate {
+    name: string
     email: string
     password: string
 }
@@ -29,7 +30,7 @@ export class UsersService {
         this.usersRepository = getCustomRepository(UsersRepository)
     }
 
-    async create({ email, password }: IUsersCreate) {
+    async create({ name, email, password }: IUsersCreate) {
 
         // antes de criar um novo usuário precisamos verificar se já existe algum usuário cadastrado nesse email
         const userExists = await this.usersRepository.findOne({
@@ -46,6 +47,7 @@ export class UsersService {
         const hashedPassword = bcrypt.hashSync(password, salt)
 
         const user = this.usersRepository.create({
+            name,
             email,
             password: hashedPassword
         })
@@ -81,6 +83,43 @@ export class UsersService {
                 ]
             }
         }
+    }
+
+    async validateToken(token: string) {
+
+        if (token) {
+            const verify: any = jwt.verify(token, process.env.AUTH_SECRET, (err, decoded) => {
+                return {
+                    err,
+                    decoded
+                }
+            })
+            if (verify.err) {
+                return {
+                    errors: [
+                        {
+                            message: verify.err.message
+                        }
+                    ]
+                }
+            } else {
+                return verify.decoded
+            }
+        } else {
+            return {
+                errors: [
+                    {
+                        message: 'token is null'
+                    }
+                ] 
+            }
+        }
+    }
+
+    async getById(id: string) {
+        const user = this.usersRepository.findOne(id)
+
+        return user
     }
 
     async update({ id, name, email, password }: IUsersUpdate) {

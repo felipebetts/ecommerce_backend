@@ -25,17 +25,41 @@ export class ProductsController {
         return res.json(product)
     }
     
-    async getProducts (req: Request, res: Response) {
+    async getProductsByDate (req: Request, res: Response) {
         const { limit } = req.params
         const { cursor } = req.body
         
         const productsService = new ProductsService()
 
-        const products = await productsService.getProducts({
+        const products = await productsService.getProductsByDate({
             limit,
             cursor
         })
 
         return res.json(products)
+    }
+
+    async getProductsByPrice (req: Request, res: Response) {
+        const { limit } = req.params
+        const { cursor } = req.body
+        
+        const productsService = new ProductsService()
+
+        const products = await productsService.getProductsByPrice({
+            limit,
+            cursor
+        })
+
+        return res.json(products)
+    }
+
+    async getById (req: Request, res: Response) {
+        const { id } = req.params
+
+        const productsService = new ProductsService()
+
+        const product = await productsService.getById(id)
+
+        return res.json(product)
     }
 }
