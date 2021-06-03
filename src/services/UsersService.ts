@@ -46,7 +46,7 @@ export class UsersService {
         const salt = bcrypt.genSaltSync()
         const hashedPassword = bcrypt.hashSync(password, salt)
 
-        const user = this.usersRepository.create({
+        const user = await this.usersRepository.create({
             name,
             email,
             password: hashedPassword
@@ -56,6 +56,12 @@ export class UsersService {
 
 
         return user
+    }
+
+    async delete(id: string) {
+        const isDeleted = await this.usersRepository.delete(id)
+
+        return isDeleted
     }
 
     async login({ usernameOrEmail, password }: IUsersLogin) {
@@ -117,9 +123,15 @@ export class UsersService {
     }
 
     async getById(id: string) {
-        const user = this.usersRepository.findOne(id)
+        const user = await this.usersRepository.findOne(id)
 
         return user
+    }
+
+    async getAll() {
+        const users = await this.usersRepository.find({})
+
+        return users
     }
 
     async update({ id, name, email, password }: IUsersUpdate) {
