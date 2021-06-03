@@ -43,6 +43,12 @@ export class ProductsService {
         return product
     }
 
+    async delete(id: string) {
+        const hasDeleted = await this.productsRepository.delete(id)
+
+        return hasDeleted
+    }
+
     async getById(id: string) {
         const product = await this.productsRepository.findOne({
             id
