@@ -13,6 +13,9 @@ export class Cart {
     
     @Column()
     product_id: string
+
+    @Column()
+    quantity: number
     
     @CreateDateColumn()
     created_at: Date

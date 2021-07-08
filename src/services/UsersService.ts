@@ -6,6 +6,19 @@ import jwt from 'jsonwebtoken'
 
 
 interface IUsersCreate {
+    name: string
+    email: string
+    password: string
+}
+
+interface IUsersLogin {
+    usernameOrEmail: string
+    password: string
+}
+
+interface IUsersUpdate {
+    id: string
+    name: string
     email: string
     password: string
 }
@@ -17,8 +30,8 @@ export class UsersService {
         this.usersRepository = getCustomRepository(UsersRepository)
     }
 
-    async create({ email, password }: IUsersCreate) {
-        
+    async create({ name, email, password }: IUsersCreate) {
+
         // antes de criar um novo usuário precisamos verificar se já existe algum usuário cadastrado nesse email
         const userExists = await this.usersRepository.findOne({
             email
@@ -29,13 +42,12 @@ export class UsersService {
             return userExists
         }
 
-        console.log(process.env.AUTH_SECRET)
-
         // se não existe vamos criar um:
         const salt = bcrypt.genSaltSync()
         const hashedPassword = bcrypt.hashSync(password, salt)
 
-        const user = this.usersRepository.create({
+        const user = await this.usersRepository.create({
+            name,
             email,
             password: hashedPassword
         })
@@ -44,5 +56,85 @@ export class UsersService {
 
 
         return user
+    }
+
+    async delete(id: string) {
+        const isDeleted = await this.usersRepository.delete(id)
+
+        return isDeleted
+    }
+
+    async login({ usernameOrEmail, password }: IUsersLogin) {
+
+        const user = usernameOrEmail.includes('@') ? await this.usersRepository.findOne({
+            where: { email: usernameOrEmail }
+        }) : await this.usersRepository.findOne({
+            where: { name: usernameOrEmail }
+        })
+
+        if (user && bcrypt.compareSync(password, user.password)) {
+            const token = jwt.sign({ data: user }, process.env.AUTH_SECRET, {
+                expiresIn: '10 days'
+            })
+            return {
+                ...user,
+                token
+            }
+        } else {
+            return {
+                errors: [
+                    {
+                        message: 'Usuario ou senha invalidos'
+                    }
+                ]
+            }
+        }
+    }
+
+    async validateToken(token: string) {
+
+        if (token) {
+            const verify: any = jwt.verify(token, process.env.AUTH_SECRET, (err, decoded) => {
+                return {
+                    err,
+                    decoded
+                }
+            })
+            if (verify.err) {
+                return {
+                    errors: [
+                        {
+                            message: verify.err.message
+                        }
+                    ]
+                }
+            } else {
+                return verify.decoded
+            }
+        } else {
+            return {
+                errors: [
+                    {
+                        message: 'token is null'
+                    }
+                ] 
+            }
+        }
+    }
+
+    async getById(id: string) {
+        const user = await this.usersRepository.findOne(id)
+
+        return user
+    }
+
+    async getAll() {
+        const users = await this.usersRepository.find({})
+
+        return users
+    }
+
+    async update({ id, name, email, password }: IUsersUpdate) {
+
     }
 }

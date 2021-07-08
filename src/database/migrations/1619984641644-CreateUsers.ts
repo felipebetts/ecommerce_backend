@@ -26,11 +26,6 @@ export class CreateUsers1619984641644 implements MigrationInterface {
                         type: 'varchar',
                     },
                     {
-                        name: 'cart_id',
-                        type: 'uuid',
-                        isNullable: true,
-                    },
-                    {
                         name: 'created_at',
                         type: 'timestamp',
                         default: 'now()'
