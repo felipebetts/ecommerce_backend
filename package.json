@@ -5,10 +5,15 @@
   "main": "index.js",
   "scripts": {
     "dev": "ts-node-dev src/server.ts",
-    "start": "node build/index.js",
+    "start": "node dist/server.js",
+    "watch": "tsc -w", 
+    "postinstall": "tsc",
     "build": "tsc",
-    "postinstall": "npm run build",
-    "typeorm": "ts-node-dev node_modules/typeorm/cli.js"
+    "typeorm": "ts-node-dev node_modules/typeorm/cli.js",
+    "deploy": "git add . && git commit -m Heroku && git push heroku master"
+  },
+  "engines": {
+    "node": "14.15.1"
   },
   "keywords": [],
   "author": "",
