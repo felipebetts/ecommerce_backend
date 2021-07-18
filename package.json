@@ -3,14 +3,21 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "compilerOptions": {
+    "include" : [
+      "src/**/*.ts"
+    ],
+    "exclude" : [
+        "node_modules"
+    ]
+  },
   "scripts": {
     "dev": "ts-node-dev src/server.ts",
-    "start": "node dist/server.js",
-    "watch": "tsc -w", 
+    "start": "ts-node src/server.ts",
+    "watch": "tsc -w",
     "postinstall": "tsc",
     "build": "tsc",
-    "typeorm": "ts-node-dev node_modules/typeorm/cli.js",
-    "deploy": "git add . && git commit -m Heroku && git push heroku master"
+    "typeorm": "ts-node-dev node_modules/typeorm/cli.js"
   },
   "engines": {
     "node": "14.15.1"
@@ -37,6 +44,7 @@
     "multer": "^1.4.2",
     "pg": "^8.6.0",
     "reflect-metadata": "^0.1.13",
+    "ts-node": "^10.1.0",
     "typeorm": "^0.2.32",
     "uuid": "^8.3.2"
   }
